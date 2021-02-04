@@ -97,9 +97,9 @@ GET_NEXT
 
 
 PRINT_HIST
-; Name:
-; My netid:
-; partners: 
+; Name: Zekai Zhang
+; My netid: zekaiz2
+; partners: hz39; zw53
 ; Introduction: the following program prints a histogram that shows the frequency of each 
 ;character in a string. We use the left-shifting method to extract the value of the frequency ;and store it to a temporary register. Then we compare this value with decimal number 9 to ;determine whether the output should be a number or a letter. Several loops have been set up to print the entire 27-bin histogram.
 ; We have set R1 to -27 indicates the outer loop counter
