@@ -1,4 +1,3 @@
-
 ;
 ; The code given to you here implements the histogram calculation that 
 ; we developed in class.  In programming lab, we will add code that
@@ -98,70 +97,77 @@ GET_NEXT
 
 
 PRINT_HIST
-
-; you will need to insert your code to print the histogram here
-; We have set R1 to 27 indicates the outer loop counter
+; Name: Zekai Zhang
+; My netid: zekaiz2
+; partners: hz39; zw53
+; Introduction: the following program prints a histogram that shows the frequency of each 
+;character in a string. We use the left-shifting method to extract the value of the frequency ;and store it to a temporary register. Then we compare this value with decimal number 9 to ;determine whether the output should be a number or a letter. Several loops have been set up to print the entire 27-bin histogram.
+; We have set R1 to -27 indicates the outer loop counter
 ; We have set R2 to be histogram string address
 ; We have set R3 to be the frequency stored in histogram string address
-; We have set R4 to be
-; We have set R5 to 4 as an inner-loop counter
-; We have set R6
+; We have set R4 to 4 as the counter of LOOP_FOUR 
+; We have set R5 to 4 as the SMALL_LOOP counter
+; We have set R6 to be a temporary register in order to store highest 4 bits of the histogram 
+;
 
 	LD R1, NUM_BINS		; set outer loop counter to #-27 
 ; (negative due to future increments)
 	LD R2, HIST_ADDR		; load the histogram starting address 
 
+; The OUTER_LOOP runs 27 times to print the entire histogram.
 OUTER_LOOP
 	LDR R3, R2, #0		; load the data stored in the histogram address
 	ADD R1, R1, #0		; copy outer loop counter
-	BRzp DONE			; end the program
+	BRzp DONE			; end the program when counter becomes zero
 
+; Print each label and space at the beginning of each row.
 PRINT_LABEL
-	LD R0, ASCII_AT
-	ADD R0, R0, R1		; print ASCII label
+	LD R0, ASCII_AT		; load the ASCII value of \u2018@\u2019 to R0
+	ADD R0, R0, R1		; add offset and print corresponding ASCII label
 	OUT
 	LD R0, SPACE		; load and print a space
 	OUT
 
-	AND R4,R4,#0		;
-	ADD R4,R4,#4		;
-LOOP_FOUR				;
-ADD R4,R4,#-1		;
-BRn JUMP_OUT		;
+; LOOP_FOUR runs 4 times to transfer the entire data value to R6 which will be used to print
+	AND R4,R4,#0		; clear R4
+	ADD R4,R4,#4		; set the loop counter to 4
 
+LOOP_FOUR				;
+ADD R4,R4,#-1		; decrement the counter by 1
+BRn JUMP_OUT		; if the counter reaches to negative, then jump out
 
 ;loading 4 bits from R3 to R6
-AND R6,R6,#0		;
-AND R5,R5,#0		;
+AND R6,R6,#0		; clear R6
+AND R5,R5,#0		; clear R5
 ADD R5,R5,#4		; Set R5 as a counter to 4
 
 SMALLER_LOOP
 ADD R6,R6,R6		; left shift R6
 ADD R3,R3,#0		; reset to BR of R3
-BRzp SKIP			;
-ADD R6,R6,#1		;
+BRzp SKIP			; if the value of R3 is zero or positive, then go to SKIP
+ADD R6,R6,#1		; if the value of R3 is negative, then add 1 to R6
 
 SKIP
 ADD R3,R3,R3		; left shift R3
-ADD R5,R5,#-1		;
-BRz GET_OUT		;
-BRnzp SMALLER_LOOP	;
+ADD R5,R5,#-1		; decrement the counter by 1
+BRz GET_OUT		; when the counter reaches to 0, go to GET_OUT
+BRnzp SMALLER_LOOP	; if the counter is positive, then go back
 GET_OUT				;
 
 
 ; print hexadecimal
 ADD R0,R6,#-9		; compare digit with 9
 BRnz PRINT_NUMERICAL	; if digit is 0-9, go to PRINT_NUMERICAL
-LD R0, A			; otherwise, load ASCII of ‘A’
-ADD R0, R0, R6		; R0 <- R6 + ‘A’ - 10
-ADD R0, R0, #-10		; R0 <- R6 + ‘A’ - 10
+LD R0, A			; otherwise, load ASCII of \u2018A\u2019
+ADD R0, R0, R6		; R0 <- R6 + \u2018A\u2019 - 10
+ADD R0, R0, #-10		; R0 <- R6 + \u2018A\u2019 - 10
 BRnzp DIG_LOOP_DONE	; use OUT trap
 
-PRINT_NUMERICAL			; Load ASCII of ‘0’
-LD R0, ZERO			; load ASCII of ‘0’
+PRINT_NUMERICAL			; Load ASCII of \u20180\u2019
+LD R0, ZERO			; load ASCII of \u20180\u2019
 ADD R0, R0, R6		;
 OUT				;
-BRnzp LOOP_FOUR
+BRnzp LOOP_FOUR		;
 
 DIG_LOOP_DONE 
 OUT				; use OUT trap
@@ -169,8 +175,8 @@ BRnzp LOOP_FOUR
 
 JUMP_OUT				;
 	LD R0, NEW_L		; print a new line
-OUT
-ADD R1, R1, #1
+OUT				;
+ADD R1, R1, #1		; increment the outer loop counter by 1
 ADD R2, R2, #1
 
 BRnzp OUTER_LOOP
@@ -198,7 +204,7 @@ STR_START	.FILL x4000	; string starting address
 
 
 ; the data added by us
-ASCII_AT	.FILL #91	; the ASCII value of ‘@+27’
+ASCII_AT	.FILL #91	; the ASCII value of \u2018@+27\u2019
 SPACE	.FILL x0020	; the ASCII value of space
 NEW_L	.FILL x000A	; the ASCII value of a new line
 
@@ -216,5 +222,3 @@ A		.FILL #65
 	; (so do not write any code below it!)
 
 	.END
-
-
