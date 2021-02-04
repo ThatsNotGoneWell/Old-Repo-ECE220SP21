@@ -1,2 +1,23 @@
 .ORIG x3000
-; write your code here
+
+AND R2,R2,#0;
+AND R3,R3,#0;
+ADD R3,R3,#4;
+
+OUTER_LOOP
+ADD R2,R2,R2;
+ADD R1,R1,#0;
+BRzp SKIP;
+ADD R2,R2,#1;
+SKIP
+ADD R1,R1,R1;
+ADD R3,R3,#-1;
+BRz ESCAPE;
+BRnzp OUTER_LOOP;
+
+HALT
+ESCAPE OUT;
+
+.END;
+
+

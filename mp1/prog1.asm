@@ -122,7 +122,11 @@ OUTER_LOOP
 
 ; Print each label and space at the beginning of each row.
 PRINT_LABEL
+<<<<<<< HEAD
 	LD R0, ASCII_AT		; load the ASCII value of ‘@’ to R0
+=======
+	LD R0, ASCII_AT		; load the ASCII value of \u2018@\u2019 to R0
+>>>>>>> 9a8b5862cb0b30878a2335d771057a88b19d672d
 	ADD R0, R0, R1		; add offset and print corresponding ASCII label
 	OUT
 	LD R0, SPACE		; load and print a space
@@ -158,6 +162,7 @@ GET_OUT				;
 ; print hexadecimal
 ADD R0,R6,#-9		; compare digit with 9
 BRnz PRINT_NUMERICAL	; if digit is 0-9, go to PRINT_NUMERICAL
+<<<<<<< HEAD
 LD R0, A			; otherwise, load ASCII of ‘A’
 ADD R0, R0, R6		; R0 <- R6 + ‘A’ - 10
 ADD R0, R0, #-10		; R0 <- R6 + ‘A’ - 10
@@ -165,6 +170,15 @@ BRnzp DIG_LOOP_DONE	; use OUT trap
 
 PRINT_NUMERICAL			; Load ASCII of ‘0’
 LD R0, ZERO			; load ASCII of ‘0’
+=======
+LD R0, A			; otherwise, load ASCII of \u2018A\u2019
+ADD R0, R0, R6		; R0 <- R6 + \u2018A\u2019 - 10
+ADD R0, R0, #-10		; R0 <- R6 + \u2018A\u2019 - 10
+BRnzp DIG_LOOP_DONE	; use OUT trap
+
+PRINT_NUMERICAL			; Load ASCII of \u20180\u2019
+LD R0, ZERO			; load ASCII of \u20180\u2019
+>>>>>>> 9a8b5862cb0b30878a2335d771057a88b19d672d
 ADD R0, R0, R6		;
 OUT				;
 BRnzp LOOP_FOUR		;
@@ -204,7 +218,11 @@ STR_START	.FILL x4000	; string starting address
 
 
 ; the data added by us
+<<<<<<< HEAD
 ASCII_AT	.FILL #91	; the ASCII value of ‘@+27’
+=======
+ASCII_AT	.FILL #91	; the ASCII value of \u2018@+27\u2019
+>>>>>>> 9a8b5862cb0b30878a2335d771057a88b19d672d
 SPACE	.FILL x0020	; the ASCII value of space
 NEW_L	.FILL x000A	; the ASCII value of a new line
 
