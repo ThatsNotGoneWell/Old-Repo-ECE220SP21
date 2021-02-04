@@ -97,8 +97,92 @@ GET_NEXT
 
 
 PRINT_HIST
+; Name:
+; My netid:
+; partners: 
+; Introduction: the following program prints a histogram that shows the frequency of each 
+;character in a string. We use the left-shifting method to extract the value of the frequency ;and store it to a temporary register. Then we compare this value with decimal number 9 to ;determine whether the output should be a number or a letter. Several loops have been set up to print the entire 27-bin histogram.
+; We have set R1 to -27 indicates the outer loop counter
+; We have set R2 to be histogram string address
+; We have set R3 to be the frequency stored in histogram string address
+; We have set R4 to 4 as the counter of LOOP_FOUR 
+; We have set R5 to 4 as the SMALL_LOOP counter
+; We have set R6 to be a temporary register in order to store highest 4 bits of the histogram 
+;
 
-; you will need to insert your code to print the histogram here
+	LD R1, NUM_BINS		; set outer loop counter to #-27 
+; (negative due to future increments)
+	LD R2, HIST_ADDR		; load the histogram starting address 
+
+; The OUTER_LOOP runs 27 times to print the entire histogram.
+OUTER_LOOP
+	LDR R3, R2, #0		; load the data stored in the histogram address
+	ADD R1, R1, #0		; copy outer loop counter
+	BRzp DONE			; end the program when counter becomes zero
+
+; Print each label and space at the beginning of each row.
+PRINT_LABEL
+	LD R0, ASCII_AT		; load the ASCII value of ‘@’ to R0
+	ADD R0, R0, R1		; add offset and print corresponding ASCII label
+	OUT
+	LD R0, SPACE		; load and print a space
+	OUT
+
+; LOOP_FOUR runs 4 times to transfer the entire data value to R6 which will be used to print
+	AND R4,R4,#0		; clear R4
+	ADD R4,R4,#4		; set the loop counter to 4
+
+LOOP_FOUR				;
+ADD R4,R4,#-1		; decrement the counter by 1
+BRn JUMP_OUT		; if the counter reaches to negative, then jump out
+
+;loading 4 bits from R3 to R6
+AND R6,R6,#0		; clear R6
+AND R5,R5,#0		; clear R5
+ADD R5,R5,#4		; Set R5 as a counter to 4
+
+SMALLER_LOOP
+ADD R6,R6,R6		; left shift R6
+ADD R3,R3,#0		; reset to BR of R3
+BRzp SKIP			; if the value of R3 is zero or positive, then go to SKIP
+ADD R6,R6,#1		; if the value of R3 is negative, then add 1 to R6
+
+SKIP
+ADD R3,R3,R3		; left shift R3
+ADD R5,R5,#-1		; decrement the counter by 1
+BRz GET_OUT		; when the counter reaches to 0, go to GET_OUT
+BRnzp SMALLER_LOOP	; if the counter is positive, then go back
+GET_OUT				;
+
+
+; print hexadecimal
+ADD R0,R6,#-9		; compare digit with 9
+BRnz PRINT_NUMERICAL	; if digit is 0-9, go to PRINT_NUMERICAL
+LD R0, A			; otherwise, load ASCII of ‘A’
+ADD R0, R0, R6		; R0 <- R6 + ‘A’ - 10
+ADD R0, R0, #-10		; R0 <- R6 + ‘A’ - 10
+BRnzp DIG_LOOP_DONE	; use OUT trap
+
+PRINT_NUMERICAL			; Load ASCII of ‘0’
+LD R0, ZERO			; load ASCII of ‘0’
+ADD R0, R0, R6		;
+OUT				;
+BRnzp LOOP_FOUR		;
+
+DIG_LOOP_DONE 
+OUT				; use OUT trap
+BRnzp LOOP_FOUR
+
+JUMP_OUT				;
+	LD R0, NEW_L		; print a new line
+OUT				;
+ADD R1, R1, #1		; increment the outer loop counter by 1
+ADD R2, R2, #1
+
+BRnzp OUTER_LOOP
+
+
+
 
 ; do not forget to write a brief description of the approach/algorithm
 ; for your implementation, list registers used in this part of the code,
@@ -110,12 +194,22 @@ DONE	HALT			; done
 
 
 ; the data needed by the program
-NUM_BINS	.FILL #27	; 27 loop iterations
+NUM_BINS	.FILL #-27	; 27 loop iterations
 NEG_AT		.FILL xFFC0	; the additive inverse of ASCII '@'
 AT_MIN_Z	.FILL xFFE6	; the difference between ASCII '@' and 'Z'
 AT_MIN_BQ	.FILL xFFE0	; the difference between ASCII '@' and '`'
 HIST_ADDR	.FILL x3F00     ; histogram starting address
 STR_START	.FILL x4000	; string starting address
+
+
+
+; the data added by us
+ASCII_AT	.FILL #91	; the ASCII value of ‘@+27’
+SPACE	.FILL x0020	; the ASCII value of space
+NEW_L	.FILL x000A	; the ASCII value of a new line
+
+ZERO		.FILL #48
+A		.FILL #65
 
 ; for testing, you can use the lines below to include the string in this
 ; program...
