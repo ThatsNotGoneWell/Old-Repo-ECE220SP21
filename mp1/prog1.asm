@@ -1,3 +1,4 @@
+
 ;
 ; The code given to you here implements the histogram calculation that 
 ; we developed in class.  In programming lab, we will add code that
@@ -99,6 +100,83 @@ GET_NEXT
 PRINT_HIST
 
 ; you will need to insert your code to print the histogram here
+; We have set R1 to 27 indicates the outer loop counter
+; We have set R2 to be histogram string address
+; We have set R3 to be the frequency stored in histogram string address
+; We have set R4 to be
+; We have set R5 to 4 as an inner-loop counter
+; We have set R6
+
+	LD R1, NUM_BINS		; set outer loop counter to #-27 
+; (negative due to future increments)
+	LD R2, HIST_ADDR		; load the histogram starting address 
+
+OUTER_LOOP
+	LDR R3, R2, #0		; load the data stored in the histogram address
+	ADD R1, R1, #0		; copy outer loop counter
+	BRzp DONE			; end the program
+
+PRINT_LABEL
+	LD R0, ASCII_AT
+	ADD R0, R0, R1		; print ASCII label
+	OUT
+	LD R0, SPACE		; load and print a space
+	OUT
+
+	AND R4,R4,#0		;
+	ADD R4,R4,#4		;
+LOOP_FOUR				;
+ADD R4,R4,#-1		;
+BRn JUMP_OUT		;
+
+
+;loading 4 bits from R3 to R6
+AND R6,R6,#0		;
+AND R5,R5,#0		;
+ADD R5,R5,#4		; Set R5 as a counter to 4
+
+SMALLER_LOOP
+ADD R6,R6,R6		; left shift R6
+ADD R3,R3,#0		; reset to BR of R3
+BRzp SKIP			;
+ADD R6,R6,#1		;
+
+SKIP
+ADD R3,R3,R3		; left shift R3
+ADD R5,R5,#-1		;
+BRz GET_OUT		;
+BRnzp SMALLER_LOOP	;
+GET_OUT				;
+
+
+; print hexadecimal
+ADD R0,R6,#-9		; compare digit with 9
+BRnz PRINT_NUMERICAL	; if digit is 0-9, go to PRINT_NUMERICAL
+LD R0, A			; otherwise, load ASCII of ‘A’
+ADD R0, R0, R6		; R0 <- R6 + ‘A’ - 10
+ADD R0, R0, #-10		; R0 <- R6 + ‘A’ - 10
+BRnzp DIG_LOOP_DONE	; use OUT trap
+
+PRINT_NUMERICAL			; Load ASCII of ‘0’
+LD R0, ZERO			; load ASCII of ‘0’
+ADD R0, R0, R6		;
+OUT				;
+BRnzp LOOP_FOUR
+
+DIG_LOOP_DONE 
+OUT				; use OUT trap
+BRnzp LOOP_FOUR
+
+JUMP_OUT				;
+	LD R0, NEW_L		; print a new line
+OUT
+ADD R1, R1, #1
+ADD R2, R2, #1
+
+BRnzp OUTER_LOOP
+
+
+
 
 ; do not forget to write a brief description of the approach/algorithm
 ; for your implementation, list registers used in this part of the code,
@@ -110,12 +188,22 @@ DONE	HALT			; done
 
 
 ; the data needed by the program
-NUM_BINS	.FILL #27	; 27 loop iterations
+NUM_BINS	.FILL #-27	; 27 loop iterations
 NEG_AT		.FILL xFFC0	; the additive inverse of ASCII '@'
 AT_MIN_Z	.FILL xFFE6	; the difference between ASCII '@' and 'Z'
 AT_MIN_BQ	.FILL xFFE0	; the difference between ASCII '@' and '`'
 HIST_ADDR	.FILL x3F00     ; histogram starting address
 STR_START	.FILL x4000	; string starting address
+
+
+
+; the data added by us
+ASCII_AT	.FILL #91	; the ASCII value of ‘@+27’
+SPACE	.FILL x0020	; the ASCII value of space
+NEW_L	.FILL x000A	; the ASCII value of a new line
+
+ZERO		.FILL #48
+A		.FILL #65
 
 ; for testing, you can use the lines below to include the string in this
 ; program...
@@ -128,3 +216,5 @@ STR_START	.FILL x4000	; string starting address
 	; (so do not write any code below it!)
 
 	.END
+
+
