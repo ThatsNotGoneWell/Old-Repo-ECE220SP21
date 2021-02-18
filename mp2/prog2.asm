@@ -16,7 +16,8 @@
 ;your code goes here
 	
 NEW_INPUT
-IN			; input from user
+GETC			; input from user
+OUT
 JSR EVALUATE	; evaluate if input is valid
 	
 	JSR PRINT_HEX	; print the hexadecimal value
@@ -478,9 +479,9 @@ INVALID
 OFFSET		.FILL #-48
 
 
-INVALID_STRING	.STRINGZ "Invalid_Expression"	;
+INVALID_STRING	.STRINGZ "Invalid Expression"	;
 
-
+TEST			.FILL #123	; For division
 
 
 
