@@ -24,12 +24,12 @@ int main()
         }
         else{
             /* the inner for loop calculates the division in the ∏ function. */
-            unsigned long  mul_top = 1, mul_bot = 1; // init both numerator and denominator to char16_t
+            unsigned long  coeff = 1; // init both numerator and denominator to char16_t
             for( i = 1; i <= k; i++){ // loop until i > k
-                mul_top *= row + 1 - i; // calculate the numerator
-                mul_bot *= i; // calculate the denominator
+                coeff *= row + 1 - i; // calculate the numerator
+                coeff /= i; // calculate the denominator
             }
-            coeff = mul_top / mul_bot; // calculate the coefficient when k is non-zero
+            
             printf("%ld ", coeff); // print the coefficient
         }
     }
