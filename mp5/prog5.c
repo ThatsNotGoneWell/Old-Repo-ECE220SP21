@@ -216,12 +216,12 @@ int make_guess (const char guess_str[]) {
   printf("With guess %d, you got %d perfect matches and %d misplaced matches.\n", guess_number, perfect_match, misplaced_match);
   printf("Your score is %d and cur max score is %d.\n", score, max_score);
   
-  guess_number += 1; // increment # of guesses used
+  
   
   // Jump out of do-while loop when return is 2
   if (perfect_match == 4){
     return 2;
   }
-  
+  guess_number += 1; // increment # of guesses used
   return 1;
 }
