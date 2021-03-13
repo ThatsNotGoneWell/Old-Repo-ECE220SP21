@@ -1,25 +1,25 @@
 Compilation Results:
 ********************
-prog5.c: In function ‘set_seed’:
-prog5.c:93:1: error: control reaches end of non-void function [-Werror=return-type]
- }
- ^
 prog5.c: In function ‘make_guess’:
-prog5.c:134:1: error: control reaches end of non-void function [-Werror=return-type]
+prog5.c:195:21: error: comparison between pointer and integer [-Werror]
+     if (guesses [i] == key_array[i]) {
+                     ^
+prog5.c: At top level:
+prog5.c:226:2: error: null character(s) ignored [-Werror]
  }
- ^
+  ^
 cc1: all warnings being treated as errors
-prog5.c: In function ‘set_seed’:
-prog5.c:93:1: error: control reaches end of non-void function [-Werror=return-type]
- }
- ^
 prog5.c: In function ‘make_guess’:
-prog5.c:134:1: error: control reaches end of non-void function [-Werror=return-type]
+prog5.c:195:21: error: comparison between pointer and integer [-Werror]
+     if (guesses [i] == key_array[i]) {
+                     ^
+prog5.c: At top level:
+prog5.c:226:2: error: null character(s) ignored [-Werror]
  }
- ^
+  ^
 cc1: all warnings being treated as errors
 This nightly test is focusing on compilation error not functionality test.
 This nightly report only tests on the released testcases.
 There are many hidden edge testcase for the MP. Please test it yourselve.
 HIGHLY RECOMMEND YOU TO START YOUR MP EARLY!!!!!!!
-Timestamp: 2021-03-12_21:10:40
+Timestamp: 2021-03-12_22:09:36
