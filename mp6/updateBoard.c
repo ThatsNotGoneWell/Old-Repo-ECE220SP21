@@ -1,3 +1,26 @@
+/*
+ * Intro Paragraph--------------------------------------------------
+ * Name: Zekai Zhang (zekaiz2)
+ * Partners: hz39, zw53
+ * The file contains three functions, each being the helper function of the next
+ * one. The first one counts the number of the live neighbors of a certain cell.
+ * The second function update the board once using the rule of the game. 
+ * The third function checks if the board is changed after one update.
+ * 
+ * 
+ * countLiveNeighbor
+ * Inputs:
+ * board: 1-D array of the current game board. 1 represents a live cell.
+ * 0 represents a dead cell
+ * boardRowSize: the number of rows on the game board.
+ * boardColSize: the number of cols on the game board.
+ * row: the row of the cell that needs to count alive neighbors.
+ * col: the col of the cell that needs to count alive neighbors.
+ * Output:
+ * return the number of alive neighbors. There are at most eight neighbors.
+ * Pay attention for the edge and corner cells, they have less neighbors.
+ */
+
 int countLiveNeighbor(int* board, int boardRowSize, int boardColSize, int row, int col){
 	int num_live = 0; // the number of live neighbors
   	int i,j;
