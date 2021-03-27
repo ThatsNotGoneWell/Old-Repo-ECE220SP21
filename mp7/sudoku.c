@@ -3,8 +3,8 @@
 //-------------------------------------------------------------------------------------------------
 // Start here to work on your MP7
 //-------------------------------------------------------------------------------------------------
-/* Name:
- * Partners:
+/* Name:Zekai Zhang (zekaiz2)
+ * Partners:hz39, zw53
  * Introduction: The following code defines several functions.
  *               The first three functions, "is_val_in_row""is_val_in_col""is_val_in_3x3_zone", are checking
  *               if this value can be put in the current cell. Function "is_val_valid" integrates the above 
