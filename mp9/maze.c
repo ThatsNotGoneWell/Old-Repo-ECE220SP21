@@ -3,7 +3,6 @@
 #include "maze.h"
 //Name: Zekai Zhang (zekaiz2)
 //Partners: hz39, zw53
-//Partner:
 //Intro Paragraph:
 //The goal of this program is to implement a maze solver by using a recursive depth-first search algorithm//
 //as well as a couple of functions that can be used to verify a correct solution.//
