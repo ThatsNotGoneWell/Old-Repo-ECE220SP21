@@ -2,8 +2,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-//Name: 
-//Partners:
+//Name: Zekai Zhang
+//Partners:hz39, zw53
 
 //intro paragraph:
 //This program is intended to store a sparse matrix by only storing the non-zero elements
