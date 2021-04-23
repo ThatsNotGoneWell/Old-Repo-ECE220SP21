@@ -1,3 +1,12 @@
+// Name: Zekai Zhang
+// Partner: hz39, zw53
+// Intro Parapragh: 
+// For this week's mp, we will implement the code in use of slicing a floorplane.
+// A slicing floorplan can be obtained by repetitively cutting the floorplan horizontally or vertically.
+// On the basis of the property of a slicing floorplan, a tree data structure can be used to represent a slicing floorplan.
+// A slicing tree is a binary tree with modules at leaves and cutlines at internal nodes.
+// Many data sturcts are already given and can be viewed in the floorplan.h file
+
 #include "floorplan.h"
 
 // Global variables. The global variables will be effectice after the input has been parsed
@@ -13,16 +22,13 @@ module_t* modules;                                          // Array for modules
 void floorplan(const char file[]) {
   
   /*printf("\n********************************** MP11 **********************************\n");
-
   // Read the modules from the given input file.
   read_modules(file);
-
   // Initialize the slicing tree. You can replace the function init_slicing_tree with the function
   // challenge_init_slicing_tree if you accomplish the challenge implementation.
   node_t* root = init_slicing_tree(NULL, 0);
   int num_nodes = (num_modules << 1) - 1;
   printf("Initial slicing tree: Root=%p, num_nodes=%d, num_modules=%d\n", root, num_nodes, num_modules);
-
   // Obtain the expression of the initial slicing tree. 
   expression_unit_t* expression = (expression_unit_t*)calloc(num_nodes, sizeof(expression_unit_t));
   get_expression(root, num_nodes, expression);
@@ -32,13 +38,11 @@ void floorplan(const char file[]) {
   printf("Initial area: %.5e\n", area);
   draw_modules("init.png");
   free(expression);
-
   // Perform the optimization process.
   printf("Perform optimization...\n");
   area = optimize(root, num_nodes);
   pnt_modules();
   printf("Packing area = %.5e (has overlapped? %d (1:yes, 0:no))\n", area, is_overlapped());
-
   // Output your floorplan.
   printf("Draw floorplan to %s\n", outfile);
   draw_modules(outfile);
@@ -56,6 +60,9 @@ void floorplan(const char file[]) {
 // Return 1 if the given slicing tree node is a leave node, and 0 otherwise.
 int is_leaf_node(node_t* ptr) {
   // TODO: (remember to modify the return value appropriately)
+  if ((ptr->left == NULL) && (ptr->right == NULL)){ // both left and right are null, then it is leaf
+    return 1;
+  }
   return 0;
 }
 
@@ -63,6 +70,9 @@ int is_leaf_node(node_t* ptr) {
 // Return 1 if the given slicing tree node is an internal node, and 0 otherwise.
 int is_internal_node(node_t* ptr) {
   // TODO: (remember to modify the return value appropriately)
+  if ((ptr->left != NULL) && (ptr->right != NULL)){ // neither left nor right is null, then it is internal
+    return 1;
+  }
   return 0;
 }
 
@@ -70,7 +80,13 @@ int is_internal_node(node_t* ptr) {
 // Return 1 if the given subtree rooted at node 'b' resides in the subtree rooted at node 'a'.
 int is_in_subtree(node_t* a, node_t* b) {
   // TODO: (remember to modify the return value appropriately)
-  return 0;
+  if (a == b){ // base case
+    return 1;
+  }
+ 	if (is_internal_node(a)){ // check if a is internal
+   	return is_in_subtree(a->left, b) || is_in_subtree(a->right, b); // if one of them is true, then b resides in a
+  }
+  return 0; // return 0 if a is leaf
 }
 
 // Procedure: rotate
@@ -78,6 +94,11 @@ int is_in_subtree(node_t* a, node_t* b) {
 // and the width of the modules are swapped.
 void rotate(node_t* ptr) {
   // TODO: 
+  int temp; // initialize a temporary integer 
+  // do the swap function
+  temp = ptr->module->w; // save the width into the temp
+  ptr->module->w = ptr->module->h; // change the value of width into the value of height
+  ptr->module->h = temp; // change the value of height into the value of weight
 }
 
 // Procedure: recut
@@ -89,6 +110,13 @@ void recut(node_t* ptr) {
   assert(ptr->module == NULL && ptr->cutline != UNDEFINED_CUTLINE);
 
   // TODO:
+  if (ptr->cutline == H){ // change from H to V
+  	ptr->cutline = V;
+    return;
+  }
+  if (ptr->cutline == V){ // change from V to H
+  	ptr->cutline = H;
+  }
   return;
 }
 
@@ -99,7 +127,11 @@ void swap_module(node_t* a, node_t* b) {
   assert(a->module != NULL && a->cutline == UNDEFINED_CUTLINE);
   assert(b->module != NULL && b->cutline == UNDEFINED_CUTLINE);
 
-  // TODO:
+  // TODO: swap function
+  module_t* temp;
+  temp = a->module;
+  a->module = b->module;
+  b->module = temp;
 }
 
 // Procedure: swap_topology
@@ -113,6 +145,31 @@ void swap_topology(node_t* a, node_t* b) {
   assert(a->parent != NULL && b->parent != NULL);
  
   // TODO:
+  node_t* temp=a;
+  node_t* temp_par=b->parent;
+
+  //change parent of b to parent of a along with children of a
+	if(a->parent->left == a){
+    a->parent->left = b;
+    b->parent = a->parent;
+  }
+  
+  if(a->parent->right == a){
+    a->parent->right = b;
+    b->parent = a->parent;
+  }
+  
+	if(temp_par->left == b){
+    temp_par->left = temp;
+    temp->parent = temp_par;
+  }
+  
+  if(temp_par->right == b){
+    temp_par->right = temp;
+    temp->parent = temp_par;
+  }
+  
+  return;
 }
 
 // Procedure: get_expression
@@ -148,6 +205,22 @@ void postfix_traversal(node_t* ptr, int* nth, expression_unit_t* expression) {
   if(ptr == NULL) return;
 
   // TODO:
+  // traverse the left subtree by recursively calling the function
+  postfix_traversal(ptr->left, nth, expression);
+  // traverse the right subtree by recursively calling the function
+  postfix_traversal(ptr->right, nth, expression);
+	
+  if (ptr->module != NULL){ // the node is a module
+  	expression[*nth].module = ptr->module;
+    expression[*nth].cutline = UNDEFINED_CUTLINE;
+    *nth += 1; // increment index
+  }
+  else{ // the node is a cutline
+  	expression[*nth].module = NULL;
+    expression[*nth].cutline = ptr->cutline;
+    *nth += 1; // increment index
+  }
+  return;
 }
 
 // get_total_resource
@@ -155,8 +228,15 @@ void postfix_traversal(node_t* ptr, int* nth, expression_unit_t* expression) {
 int get_total_resource(node_t* ptr)
 {
   // TODO:
-
-  return 0;
+  int total = 0;
+  if(ptr!=NULL){//if not bottom
+    if(is_leaf_node(ptr)){
+      total += ptr->module->resource;
+    }
+    total += get_total_resource(ptr->left);
+    total += get_total_resource(ptr->right); //recursively sum up the tree
+  }
+  return total;
 }
 
 // Procedure: init_slicing_tree
@@ -191,7 +271,34 @@ node_t* init_slicing_tree(node_t* par, int n) {
   assert(n >= 0 && n < num_modules);
 
   // TODO:
-  return NULL;
+  node_t* ptr = (node_t*)malloc(sizeof(node_t));
+  
+  // base case
+  if (n == num_modules -1){ // last module
+  	ptr->module = modules + n;
+    ptr->cutline = UNDEFINED_CUTLINE;
+    ptr->parent = par;
+    ptr->left = NULL;
+    ptr->right = NULL;
+    return ptr;
+  }
+  
+  // internal node, which is V cutline in this case
+  ptr->cutline = V;
+  ptr->module = NULL;
+  
+  // right child
+  ptr->right = (node_t*)malloc(sizeof(node_t));
+  ptr->right->module = modules + n;
+  ptr->right->cutline = UNDEFINED_CUTLINE;
+  ptr->right->parent = ptr;
+  ptr->right->left = NULL;
+  ptr->right->right = NULL;
+  
+  // left child
+  ptr->left = init_slicing_tree(ptr, n+1);
+  
+  return ptr;
 }
 
 
@@ -589,13 +696,10 @@ double optimize(node_t *root, int num_nodes) {
     
     // Generate the neighboring solution.
     for(i=0; i<MAX_NUM_RAND_STEPS; ++i) {
-
       copy_expression(next_expression, curr_expression, num_nodes);
-
       key = rand()%4;
       
       switch(key) {
-
         // Perform recut.
         case 0:
           do{
@@ -639,7 +743,6 @@ double optimize(node_t *root, int num_nodes) {
           } while (!is_valid_expression(next_expression, num_nodes));
         break;
       }
-
       // Evaluate the area.
       curr_area = packing(curr_expression, num_nodes);
       next_area = packing(next_expression, num_nodes);
@@ -654,7 +757,6 @@ double optimize(node_t *root, int num_nodes) {
     }
     temperature *= TEMPERATURE_DECREASING_RATE;
   }
-
   best_area = packing(best_expression, num_nodes);*/
 
   
@@ -667,8 +769,3 @@ double optimize(node_t *root, int num_nodes) {
 
   return best_area;
 }
-
-
-
-
-
